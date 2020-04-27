@@ -263,7 +263,9 @@ namespace Snake
 
                     Thread.Sleep((int)sleepTime);
                 }
-                Console.Clear();
+                ClearSnake();
+                backgroundMusic.Stop();
+
             }
         }
 
@@ -392,8 +394,8 @@ namespace Snake
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("What is Snake Game?\n\n");
             Console.WriteLine("Snake is a simple computer game program that requires the users to control a \"snake\" in the screen to " +
-                "obtain as many \"apples\" spawned in the map. As the \"snake\" consumes each \"apple\", the length of the snake will increase " +
-                "and thus, making it harder for the user to control. If the user hits a wall or any part of its body, the game would end");
+                "obtain as many \"apples\" (@) spawned in the map. As the \"snake\" consumes each \"apple\", the length of the snake will increase " +
+                "and thus, making it harder for the user to control. If the user hits a wall (=) or any part of its body (*), the game would end");
             Console.ResetColor();
 
             Console.WriteLine("\n\nPress ENTER key to go back to menu");
@@ -457,22 +459,26 @@ namespace Snake
                 //the split will be used used when username is added
                 foreach (string line in lines)
                 {
-                    score = line.Split(',');
-                    //align score (through different amount of tab)
-                    tabNum = 4 - (score[0].Length / 8);
-                    for (int i = 0; i < tabNum; i++)
+                    //only top 20 is shown
+                    if (inc <= 20)
                     {
-                        tab += "\t";
+                        score = line.Split(',');
+                        //align score (through different amount of tab)
+                        tabNum = 4 - (score[0].Length / 8);
+                        for (int i = 0; i < tabNum; i++)
+                        {
+                            tab += "\t";
+                        }
+                        //optional for name with 7 letters
+                        if (score[0].Length == 7)
+                        {
+                            tab = "\t\t\t";
+                        }
+                        output = inc.ToString() + ")\t " + score[0] + tab + " " + score[1];
+                        Console.WriteLine(output);
+                        inc++;
+                        tab = "";
                     }
-                    //optional for name with 7 letters
-                    if (score[0].Length == 7)
-                    {
-                        tab = "\t\t\t";
-                    }
-                    output = inc.ToString() + ")\t " + score[0] + tab + " " + score[1];
-                    Console.WriteLine(output);
-                    inc++;
-                    tab = "";
                 }
                 Console.ResetColor();
 
@@ -542,6 +548,27 @@ namespace Snake
                 Console.SetCursorPosition((Console.WindowWidth - errMsg.Length) / 2, Console.WindowHeight / 4);
                 Console.WriteLine(errMsg);
             }
+        }
+
+        //clear screen
+        public static void ClearSnake()
+        {
+            int length = snakeElements.Count;
+            int amount = obstacles.Count;
+            //delete the snake
+            for (int i = 0; i < length; i++)
+            {
+                Position snakeElement = snakeElements.Dequeue();
+                Console.SetCursorPosition(snakeElement.col, snakeElement.row);
+                Console.Write(" ");
+
+            }
+            //clear all obstacles
+            for (int i = 0; i < amount; i++)
+            {
+                obstacles.Remove(obstacles[0]);
+            }
+            Console.Clear();
         }
     }
 }
