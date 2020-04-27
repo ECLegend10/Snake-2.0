@@ -1,8 +1,10 @@
+loloplololoplo,90
+b,16
+dsgdgsdvsdvdsvsv,10
 Alvin,5
 Ben,3
 Elwin,2
+Ben,1
 JohnDoe,0
 John Doe,0
 pl,0
-dsgdgsdvsdvdsvsv,10
-loloplololoplo,90

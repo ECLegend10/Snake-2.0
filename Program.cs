@@ -35,42 +35,65 @@ namespace Snake
                 bool gameLoop = true; //this is used so that the player could go back to main menu after played the game
                 bool userPlay = false;//checks if the user wants to play snake game
                 string userName = ""; //Player's name
+                int difficultyLevel = 99;  // Player's selected difficulty.
+
+                string[] lMenuOptions = new string[4] { "Play", "Scores", "\tHelp", " Exit" };
+                string[] lDifficultyOptions = new string[3] { "Easy", " Intermediate", "\t\t Hardcore"};
+
                 while (!userPlay)//loop stays in place as long as user does not want to play yet
                 {
-                    int fUserChoice = GameMenu();
+                    int fUserChoice = GameMenu(lMenuOptions);
                     userPlay = DetermineUserMenuChoice(fUserChoice);
                     if (userPlay == true)
                     {
                         GetUserName(ref userName);
+                        difficultyLevel = GameMenu(lDifficultyOptions);
                     }
                 }
-
-
 
                 byte right = 0;
                 byte left = 1;
                 byte down = 2;
                 byte up = 3;
                 int lastFoodTime = 0;
-                int foodDissapearTime = 15000;
+                int foodDissapearTime = 20000;
+                int numberOfObstaclesInit = 0;
+                int snakeLengthInit = 3;
+                double sleepTime = 100;  // Speed
+
+                if (difficultyLevel == 2)  // Hardcore
+                {
+                    sleepTime = 40;
+                    snakeLengthInit = 12;
+                    numberOfObstaclesInit = 10;
+                    foodDissapearTime = 10000;
+                }
+                else if (difficultyLevel == 1)  // Intermediate
+                {
+                    sleepTime = 70;
+                    snakeLengthInit = 7;
+                    numberOfObstaclesInit = 5;
+                    foodDissapearTime = 15000;
+                }
+                // Current configuration is for easy mode, therefore for easy mode nothing needs to change.
 
                 //this is used to increment when the users missed some food (in this case 3) and the snake would lost one part
                 int missedFoodCount = 0;
 
                 Position[] directions = new Position[]
                 {
-                new Position(0, 1), // right
-                new Position(0, -1), // left
-                new Position(1, 0), // down
-                new Position(-1, 0), // up
+                    new Position(0, 1), // right
+                    new Position(0, -1), // left
+                    new Position(1, 0), // down
+                    new Position(-1, 0), // up
                 };
-                double sleepTime = 100;
+                
                 int direction = right;
                 Console.BufferHeight = Console.WindowHeight;
                 lastFoodTime = Environment.TickCount;
 
-                initialiseObstacles();
-                initialiseSnake();
+                initialiseObstacles(numberOfObstaclesInit);
+                initialiseSnake(snakeLengthInit);
                 createFood();
 
                 foreach (Position position in snakeElements)
@@ -270,10 +293,10 @@ namespace Snake
         }
 
         // Initialise Obstacles
-        public static void initialiseObstacles()
+        public static void initialiseObstacles(int numberOfObstacles)
         {
             int counterX = 0;
-            while (counterX < 5)
+            while (counterX < numberOfObstacles)
             {
                 Position obstacle = new Position();
                 obstacle = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight),
@@ -297,11 +320,10 @@ namespace Snake
         }
 
         //Game Menu Function
-        public static int GameMenu()
+        public static int GameMenu(string[] lMenuOptions)
         {
             Console.SetCursorPosition(0, 0);
             Console.WriteLine("SNAKE GAME!");
-            string[] lMenuOptions = new string[4] { "Play", "Scores", "\tHelp", " Exit" };
 
             //positions and spacing for printing the menu options
             const int startX = 5;
@@ -344,7 +366,7 @@ namespace Snake
                             break;
                         }
                 }
-            } while (lUserChoice != ConsoleKey.Enter);//loop stays in places as long as the user does not confirm an action
+            } while (lUserChoice != ConsoleKey.Enter);  // loop stays in places as long as the user does not confirm an action
 
             Console.Clear();//remove game menu            
             Console.CursorVisible = true;
@@ -352,25 +374,25 @@ namespace Snake
             return lcurrentChoice;
         }
 
-        //Game Menu Choices
+        // Game Menu Choices
         public static bool DetermineUserMenuChoice(int aUserChoice)
         {
-            if (aUserChoice == 3) //Exit Game
+            if (aUserChoice == 3)  //Exit Game
             {
                 Environment.Exit(0);
                 return false;
             }
-            else if (aUserChoice == 2)//Help Menu
+            else if (aUserChoice == 2)  // Help Menu
             {
                 PrintGameInstructions();
                 return false;
             }
-            else if (aUserChoice == 1)//Scores Menu
+            else if (aUserChoice == 1)  // Scores Menu
             {
                 ReadScores();
                 return false;
             }
-            else if (aUserChoice == 0)//Play Snake Game
+            else if (aUserChoice == 0)  // Play Snake Game
             {
                 return true;
             }
@@ -413,9 +435,9 @@ namespace Snake
 
 
         // Initialise Snake
-        public static void initialiseSnake()
+        public static void initialiseSnake(int initSnakeLength)
         {
-            for (int i = 0; i <= 3; i++) //change the initial length of snake from 5 to 3
+            for (int i = 0; i <= initSnakeLength; i++) //change the initial length of snake from 5 to 3
             {
                 snakeElements.Enqueue(new Position(0, i));
             }
