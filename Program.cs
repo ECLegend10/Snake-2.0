@@ -30,6 +30,13 @@ namespace Snake
 
         static void Main(string[] args)
         {
+            bool userPlay = false;//checks if the user wants to play snake game
+            while (!userPlay)//loop stays in place as long as user does not want to play yet
+            {
+                int fUserChoice = GameMenu();
+                userPlay = DetermineUserMenuChoice(fUserChoice);
+            }
+
             byte right = 0;
             byte left = 1;
             byte down = 2;
@@ -266,6 +273,154 @@ namespace Snake
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.SetCursorPosition(obstacle.col, obstacle.row);
                 Console.Write("=");
+            }
+        }
+
+        //Game Menu Function
+        public static int GameMenu()
+        {
+
+            Console.WriteLine("SNAKE GAME!");
+            string[] lMenuOptions = new string[4] { "Play", "Scores", "\tHelp", " Exit" };
+
+            //positions and spacing for printing the menu options
+            const int startX = 5;
+            const int startY = 3;
+            const int choiceSpacing = 5;
+
+            int lcurrentChoice = 0;//get menu item that the user is pointing at
+
+            ConsoleKey lUserChoice;//user's keyboard controls       
+            Console.CursorVisible = false;
+
+            do
+            {
+                for (int i = 0; i < lMenuOptions.Length; i++)
+                {
+                    /*This will print all the menu options with spacing added
+                     * The text colour will be red if its the one the user is pointing at*/
+                    Console.SetCursorPosition((startX * i) + choiceSpacing, startY);
+                    if (i == lcurrentChoice)
+                        Console.ForegroundColor = ConsoleColor.Red;
+
+                    Console.WriteLine(lMenuOptions[i]);
+                    Console.ResetColor();
+                }
+
+                //checks user keyboard key actions
+                lUserChoice = Console.ReadKey(true).Key;
+                switch (lUserChoice)
+                {
+                    case ConsoleKey.LeftArrow:
+                        {
+                            if (lcurrentChoice % lMenuOptions.Length > 0)
+                                lcurrentChoice--;//changes the current option the user is pointing at
+                            break;
+                        }
+                    case ConsoleKey.RightArrow:
+                        {
+                            if (lcurrentChoice % lMenuOptions.Length < lMenuOptions.Length - 1)
+                                lcurrentChoice++;
+                            break;
+                        }
+                }
+            } while (lUserChoice != ConsoleKey.Enter);//loop stays in places as long as the user does not confirm an action
+
+            Console.Clear();//remove game menu            
+            Console.CursorVisible = true;
+
+            return lcurrentChoice;
+        }
+
+        public static bool DetermineUserMenuChoice(int aUserChoice)
+        {
+            if (aUserChoice == 3) //Exit Game
+            {
+                Environment.Exit(0);
+                return false;
+            }
+            else if (aUserChoice == 2)//Help Menu
+            {
+                PrintGameInstructions();
+                return false;
+            }
+            else if (aUserChoice == 1)//Scores Menu
+            {
+                ReadScores();
+                return false;
+            }
+            else if (aUserChoice == 0)//Play Snake Game
+            {
+                return true;
+            }
+            return true;
+        }
+
+        public static void PrintGameInstructions()
+        {
+            Console.Clear();
+            Console.SetCursorPosition(0, 3);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("What is Snake Game?\n\n");
+            Console.WriteLine("Snake is a simple computer game program that requires the users to control a \"snake\" in the screen to " +
+                "obtain as many \"apples\" spawned in the map. As the \"snake\" consumes each \"apple\", the length of the snake will increase " +
+                "and thus, making it harder for the user to control. If the user hits a wall or any part of its body, the game would end");
+            Console.ResetColor();
+
+            Console.WriteLine("\n\nPress ENTER key to go back to menu");
+            ConsoleKeyInfo userInput = Console.ReadKey();
+
+            //waits for user to press enter to exit help menu
+            while (userInput.Key != ConsoleKey.Enter)
+            {
+                userInput = Console.ReadKey();
+
+            }
+            Console.Clear();
+
+        }
+        public static bool ReadScores()
+        {
+            //score txt file
+            string mapFile = @"..\..\scores.txt";
+            Console.WriteLine("User Scores");
+
+            if (File.Exists(mapFile))
+            {
+                // Read a text file line by line.
+                string[] lines = File.ReadAllLines(mapFile);
+                List<int> scores = new List<int>();
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                //the split will be used used when username is added
+                foreach (string line in lines)
+                {
+                    //the line can still be converted to int when there is only score
+                    int getScore = Int32.Parse(line);
+                    Console.WriteLine(line);
+                }
+                Console.ResetColor();
+
+                Console.WriteLine("\n\nPress ENTER key to go back to menu");
+                ConsoleKeyInfo userInput = Console.ReadKey();
+
+                //waits for user to press enter to exit help menu
+                while (userInput.Key != ConsoleKey.Enter)
+                {
+                    userInput = Console.ReadKey();
+
+                }
+                Console.Clear();
+
+                return true;
+            }
+            else
+            {
+                string errMsg = "File not exist";
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.SetCursorPosition((Console.WindowWidth - errMsg.Length) / 2, Console.WindowHeight / 4);
+                Console.WriteLine(errMsg);
+                return false;
             }
         }
 
