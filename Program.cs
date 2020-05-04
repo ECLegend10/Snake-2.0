@@ -36,9 +36,11 @@ namespace Snake
                 bool userPlay = false;//checks if the user wants to play snake game
                 string userName = ""; //Player's name
                 int difficultyLevel = 99;  // Player's selected difficulty.
+                int chooseColour = 0; //Player's selected colour's index
 
                 string[] lMenuOptions = new string[4] { "Play", "Scores", "\tHelp", " Exit" };
-                string[] lDifficultyOptions = new string[3] { "Easy", " Intermediate", "\t\t Hardcore"};
+                string[] lDifficultyOptions = new string[3] { "Easy", " Intermediate", "\t\tHardcore"};
+                string[] lColourOptions = new string[3] { "Red", "Blue", "\tGreen" };
 
                 while (!userPlay)//loop stays in place as long as user does not want to play yet
                 {
@@ -48,34 +50,24 @@ namespace Snake
                     {
                         GetUserName(ref userName);
                         difficultyLevel = GameMenu(lDifficultyOptions);
+                        chooseColour = GameMenu(lColourOptions);
                     }
                 }
 
-                byte right = 0;
-                byte left = 1;
-                byte down = 2;
-                byte up = 3;
+                byte right = 0, left = 1, down = 2, up = 3;
                 int lastFoodTime = 0;
                 int foodDissapearTime = 20000;
                 int numberOfObstaclesInit = 0;
                 int snakeLengthInit = 3;
+                int snakeHealth = 3; //although health is initialized but it is not used yet
+                int bonusPoints = 0;
                 double sleepTime = 100;  // Speed
 
-                if (difficultyLevel == 2)  // Hardcore
-                {
-                    sleepTime = 40;
-                    snakeLengthInit = 12;
-                    numberOfObstaclesInit = 10;
-                    foodDissapearTime = 10000;
-                }
-                else if (difficultyLevel == 1)  // Intermediate
-                {
-                    sleepTime = 70;
-                    snakeLengthInit = 7;
-                    numberOfObstaclesInit = 5;
-                    foodDissapearTime = 15000;
-                }
-                // Current configuration is for easy mode, therefore for easy mode nothing needs to change.
+                //Difficulty effect
+                DifficultyEffect(difficultyLevel, ref sleepTime, ref snakeLengthInit, ref numberOfObstaclesInit, ref foodDissapearTime);
+
+                //Make effect from the chosen colour
+                ConsoleColor snakeColor = ColourEffect(chooseColour, ref foodDissapearTime, ref snakeHealth, ref bonusPoints);
 
                 //this is used to increment when the users missed some food (in this case 3) and the snake would lost one part
                 int missedFoodCount = 0;
@@ -99,7 +91,7 @@ namespace Snake
                 foreach (Position position in snakeElements)
                 {
                     Console.SetCursorPosition(position.col, position.row);
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.ForegroundColor = snakeColor;
                     Console.Write("*");
                 }
 
@@ -158,7 +150,7 @@ namespace Snake
                     if (snakeNewHead.col >= Console.WindowWidth) snakeNewHead.col = 0;
 
                     //points count
-                    int userPoints = (snakeElements.Count - 4);
+                    int userPoints = (snakeElements.Count - 4) + bonusPoints;
                     if (missedFoodCount == 3)
                     {
                         //missed 3 food in a row, deduct 1 point, remove the tail
@@ -216,20 +208,21 @@ namespace Snake
                     else
                     {
                         //reset score display
+                        Console.ForegroundColor = ConsoleColor.Gray;
                         Console.SetCursorPosition(0, 0);
-                        Console.WriteLine("Current points:              ");
+                        Console.WriteLine("Current points:      ");
                         //display score
                         Console.SetCursorPosition(0, 0);
                         Console.WriteLine("Current points: {0}", userPoints);
                     }
 
                     Console.SetCursorPosition(snakeHead.col, snakeHead.row);
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.ForegroundColor = snakeColor;
                     Console.Write("*");
 
                     snakeElements.Enqueue(snakeNewHead);
                     Console.SetCursorPosition(snakeNewHead.col, snakeNewHead.row);
-                    Console.ForegroundColor = ConsoleColor.Gray;
+                    Console.ForegroundColor = snakeColor;
                     if (direction == right) Console.Write(">");
                     if (direction == left) Console.Write("<");
                     if (direction == up) Console.Write("^");
@@ -335,6 +328,19 @@ namespace Snake
             ConsoleKey lUserChoice;//user's keyboard controls       
             Console.CursorVisible = false;
 
+            //check whether the player is choosing colour now
+            if (lMenuOptions[0] == "Red")
+            {
+                //show ability for each colour
+                Console.SetCursorPosition(5, 10);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Ability of each colour: " +
+                    "\n     1) Red - Every food would stay longer for 3 seconds" +
+                    "\n     2) Blue - Gain 3 points at the beginning of the game" +
+                    "\n     3) Green - Gain an extra health at the beginning of the game");
+                Console.ResetColor();
+            }
+
             do
             {
                 for (int i = 0; i < lMenuOptions.Length; i++)
@@ -417,7 +423,13 @@ namespace Snake
             Console.WriteLine("What is Snake Game?\n\n");
             Console.WriteLine("Snake is a simple computer game program that requires the users to control a \"snake\" in the screen to " +
                 "obtain as many \"apples\" (@) spawned in the map. As the \"snake\" consumes each \"apple\", the length of the snake will increase " +
-                "and thus, making it harder for the user to control. If the user hits a wall (=) or any part of its body (*), the game would end");
+                "and thus, making it harder for the user to control. If the user hits a wall (=) or any part of its body (*), the game would end" +
+                "\n\nYou are required to provide a username before you play the game." +
+                "\n\nThere will be 3 difficuly levels: Easy, Intermediate, Hardcore. Try your best to challenge them!" +
+                "\n\nThen, you will have to choose a colour for your snake. There will be only 3 colours, but each of them has special ability!" +
+                "\n1) Red - Every food would stay longer for 3 seconds" +
+                "\n2) Blue - Gain 3 points at the beginning of the game" +
+                "\n3) Green - Gain an extra health at the beginning of the game");
             Console.ResetColor();
 
             Console.WriteLine("\n\nPress ENTER key to go back to menu");
@@ -453,10 +465,47 @@ namespace Snake
             }
             while (snakeElements.Contains(food) || obstacles.Contains(food));
             Console.SetCursorPosition(food.col, food.row);
-            Console.ForegroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write("@");
         }
 
+        public static void DifficultyEffect(int diff, ref double sleepTime, ref int snakeLengthInit, ref int numberOfObstaclesInit, ref int foodDissapearTime)
+        {
+            if (diff == 2)  // Hardcore
+            {
+                sleepTime = 40;
+                snakeLengthInit = 12;
+                numberOfObstaclesInit = 10;
+                foodDissapearTime = 10000;
+            }
+            else if (diff == 1)  // Intermediate
+            {
+                sleepTime = 70;
+                snakeLengthInit = 7;
+                numberOfObstaclesInit = 5;
+                foodDissapearTime = 15000;
+            }
+            // Current configuration is for easy mode, therefore for easy mode nothing needs to change.
+        }
+
+        public static ConsoleColor ColourEffect(int colour, ref int time, ref int health, ref int points)
+        {
+            if (colour == 0) 
+            {
+                time += 3000;
+                return ConsoleColor.Red;
+            }
+            else if (colour == 1)
+            {
+                points += 3;
+                return ConsoleColor.Blue;
+            }
+            else
+            {
+                health++;
+                return ConsoleColor.Green;
+            }
+        }
 
         public static bool ReadScores()
         {
@@ -591,6 +640,7 @@ namespace Snake
                 obstacles.Remove(obstacles[0]);
             }
             Console.Clear();
+            Console.ResetColor();
         }
     }
 }
