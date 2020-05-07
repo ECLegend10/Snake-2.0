@@ -27,6 +27,7 @@ namespace Snake
         static List<Position> obstacles = new List<Position>() { };
         static Queue<Position> snakeElements = new Queue<Position>();
         static Position food;
+        static Position XFood;
 
         static void Main(string[] args)
         {
@@ -62,6 +63,7 @@ namespace Snake
                 int snakeHealth = 3; //although health is initialized but it is not used yet
                 int bonusPoints = 0;
                 double sleepTime = 100;  // Speed
+                bool superXFoodEffect = false;
 
                 //Difficulty effect
                 DifficultyEffect(difficultyLevel, ref sleepTime, ref snakeLengthInit, ref numberOfObstaclesInit, ref foodDissapearTime);
@@ -94,7 +96,6 @@ namespace Snake
                     Console.ForegroundColor = snakeColor;
                     Console.Write("*");
                 }
-
 
                 //Below are the music packs
                 MediaPlayer backgroundMusic = new MediaPlayer();//Continous background music
@@ -228,9 +229,22 @@ namespace Snake
                     if (direction == up) Console.Write("^");
                     if (direction == down) Console.Write("v");
 
+                    // If snake consumes X food:
+                    if (snakeNewHead.col == XFood.col && snakeNewHead.row == XFood.row)
+                    {
+                        eatEffect.Play();
+                        superXFoodEffect = true;
+                    }
+
                     // If snake consumes the food:
                     if (snakeNewHead.col == food.col && snakeNewHead.row == food.row)
                     {
+                        // Add bonus point to score after eating X.
+                        if (superXFoodEffect == true) {
+                            bonusPoints++;
+                            superXFoodEffect = false;
+                        }
+
                         eatEffect.Play();
                         createFood();
                         // feeding the snake
@@ -260,7 +274,6 @@ namespace Snake
                         Position last = snakeElements.Dequeue();  // Remove the last bit of snake.
                         Console.SetCursorPosition(last.col, last.row);
                         Console.Write(" ");
-
                     }
 
                     // If food not consumed before time limit, generate new food.
@@ -458,6 +471,21 @@ namespace Snake
         // Create Food
         public static void createFood()
         {
+            int clickPercentage = 10;  // 10 percent chance to generate bonus food.
+            int randomValueBetween0And99 = randomNumbersGenerator.Next(100);
+            if (randomValueBetween0And99 < clickPercentage)
+            {
+                do
+                {
+                    XFood = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight),
+                        randomNumbersGenerator.Next(0, Console.WindowWidth));
+                }
+                while (snakeElements.Contains(XFood) || obstacles.Contains(XFood));
+                Console.SetCursorPosition(XFood.col, XFood.row);
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.Write("X");
+            }
+
             do
             {
                 food = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight),
