@@ -28,6 +28,7 @@ namespace Snake
         static Queue<Position> snakeElements = new Queue<Position>();
         static Position food;
         static Position XFood;
+        static Position life;
 
         static void Main(string[] args)
         {
@@ -58,9 +59,11 @@ namespace Snake
                 byte right = 0, left = 1, down = 2, up = 3;
                 int lastFoodTime = 0;
                 int foodDissapearTime = 20000;
+                int lastHealthBonusTime = 0;
+                int lastHealthDissapearTime = 15000;
                 int numberOfObstaclesInit = 0;
                 int snakeLengthInit = 3;
-                int snakeHealth = 3; //although health is initialized but it is not used yet
+                int snakeHealth = 3; 
                 int bonusPoints = 0;
                 double sleepTime = 100;  // Speed
                 bool superXFoodEffect = false;
@@ -161,9 +164,43 @@ namespace Snake
                         missedFoodCount = 0;
                     }
 
-                    // If the snake hits itself or hits the obstacles
-                    // added new rule which is the game ends when the snake is gone
-                    if (snakeElements.Contains(snakeNewHead) || obstacles.Contains(snakeNewHead) || snakeElements.Count == 0)
+                    if (obstacles.Contains(snakeNewHead)) // if the snake hits an obstacle it will lose 1 health
+                    {
+                        ObstacleEffect.Play();
+                        snakeHealth--;
+                        
+                        int length = snakeElements.Count;
+                        //delete the snake
+                        for (int i = 0; i < length; i++)
+                        {
+                            Position snakeElement = snakeElements.Dequeue();
+                            Console.SetCursorPosition(snakeElement.col, snakeElement.row);
+                            Console.Write(" ");
+                        }
+
+                        if (snakeHealth != 0) // the snake will respawn again if it still has health left
+                        {
+                            initialiseSnake(snakeLengthInit);
+                            direction = right;
+                            snakeHead = snakeElements.Last();  // Head at end of queue
+                            nextDirection = directions[direction];
+
+                            // If crossed border, move to other end of the terminal
+                            snakeNewHead = new Position(snakeHead.row + nextDirection.row,
+                                snakeHead.col + nextDirection.col);
+                            foreach (Position position in snakeElements)
+                            {
+                                Console.SetCursorPosition(position.col, position.row);
+                                Console.ForegroundColor = snakeColor;
+                                Console.Write("*");
+                            }
+                        }
+
+                    }
+
+                        // If the snake hits itself or has 0 health
+                        // added new rule which is the game ends when the snake is gone
+                        if (snakeElements.Contains(snakeNewHead) || snakeHealth == 0 || snakeElements.Count == 0)
                     {
                         ObstacleEffect.Play();
                         Thread.Sleep(500);
@@ -208,6 +245,7 @@ namespace Snake
                     }
                     else
                     {
+                        
                         //reset score display
                         Console.ForegroundColor = ConsoleColor.Gray;
                         Console.SetCursorPosition(0, 0);
@@ -215,6 +253,7 @@ namespace Snake
                         //display score
                         Console.SetCursorPosition(0, 0);
                         Console.WriteLine("Current points: {0}", userPoints);
+                        Console.WriteLine("Current Life: {0}", snakeHealth);
                     }
 
                     Console.SetCursorPosition(snakeHead.col, snakeHead.row);
@@ -229,8 +268,26 @@ namespace Snake
                     if (direction == up) Console.Write("^");
                     if (direction == down) Console.Write("v");
 
-                    // If snake consumes X food:
-                    if (snakeNewHead.col == XFood.col && snakeNewHead.row == XFood.row)
+                    if (snakeNewHead.col == life.col && snakeNewHead.row == life.row) // If the snake consumes the health bonus
+                    {
+                        eatEffect.Play();
+                        if (snakeHealth < 3) // can only gain health if it has less than 3 health
+                        {
+                            snakeHealth++;
+                            // feeding the snake
+                            lastHealthBonusTime = Environment.TickCount;  // Reset last food Time
+                            sleepTime--;
+                        }
+                        else // the timer will reset if it consumes the health bonus but has 3 health prior to the consumption
+                        {
+                            lastHealthBonusTime = Environment.TickCount;  // Reset last food Time
+                            sleepTime--;
+                        }
+                        
+                    }
+
+                        // If snake consumes X food:
+                        if (snakeNewHead.col == XFood.col && snakeNewHead.row == XFood.row)
                     {
                         eatEffect.Play();
                         superXFoodEffect = true;
@@ -277,7 +334,7 @@ namespace Snake
                     }
 
                     // If food not consumed before time limit, generate new food.
-                    if (Environment.TickCount - lastFoodTime >= foodDissapearTime)
+                    if (Environment.TickCount - lastFoodTime >= foodDissapearTime )
                     {
                         //Additional missed food
                         missedFoodCount++;
@@ -288,6 +345,15 @@ namespace Snake
                         Console.Write(" ");
                         createFood();
                         lastFoodTime = Environment.TickCount;
+                    }
+
+                    //Health bonus will regenerate if not consumed before the time limit
+                    if (Environment.TickCount - lastHealthBonusTime >= lastHealthDissapearTime && snakeHealth < 3)
+                    {
+                        Console.SetCursorPosition(life.col, life.row);
+                        Console.Write(" ");
+                        GenerateLife();
+                        lastHealthBonusTime = Environment.TickCount;
                     }
 
                     sleepTime -= 0.01;
@@ -468,6 +534,22 @@ namespace Snake
             {
                 snakeElements.Enqueue(new Position(0, i));
             }
+        }
+
+        //Generate the health bonus
+        public static void GenerateLife()
+        {
+
+            do
+            {
+                life = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight),
+                    randomNumbersGenerator.Next(0, Console.WindowWidth));
+            }
+            while (snakeElements.Contains(life) || obstacles.Contains(food));
+
+            Console.SetCursorPosition(life.col, life.row);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("L");
         }
 
         // Create Food
