@@ -305,6 +305,9 @@ namespace Snake
                             superXFoodEffect = false;
                         }
 
+                        Console.SetCursorPosition(XFood.col, XFood.row);
+                        Console.Write(" ");
+
                         eatEffect.Play();
                         createFood();
                         // feeding the snake
@@ -558,7 +561,7 @@ namespace Snake
         // Create Food
         public static void createFood()
         {
-            int clickPercentage = 10;  // 10 percent chance to generate bonus food.
+            int clickPercentage = 20;  // 10 percent chance to generate bonus food.
             int randomValueBetween0And99 = randomNumbersGenerator.Next(100);
             if (randomValueBetween0And99 < clickPercentage)
             {
