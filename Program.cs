@@ -29,6 +29,8 @@ namespace Snake
         static Position food;
         static Position XFood;
         static Position life;
+        //Window's Height - 1 to prevent corner issue
+        public static int height = Console.WindowHeight - 1;
 
         static void Main(string[] args)
         {
@@ -86,7 +88,6 @@ namespace Snake
                 };
                 
                 int direction = right;
-                Console.BufferHeight = Console.WindowHeight;
                 lastFoodTime = Environment.TickCount;
 
                 initialiseObstacles(numberOfObstaclesInit);
@@ -148,10 +149,12 @@ namespace Snake
                     Position snakeNewHead = new Position(snakeHead.row + nextDirection.row,
                         snakeHead.col + nextDirection.col);
 
-                    if (snakeNewHead.col < 0) snakeNewHead.col = Console.WindowWidth - 1;
-                    if (snakeNewHead.row < 0) snakeNewHead.row = Console.WindowHeight - 1;
-                    if (snakeNewHead.row >= Console.WindowHeight) snakeNewHead.row = 0;
-                    if (snakeNewHead.col >= Console.WindowWidth) snakeNewHead.col = 0;
+                    if (snakeNewHead.col < 0 || snakeNewHead.row < 0
+                   || snakeNewHead.col >= Console.WindowWidth || snakeNewHead.row >= height)
+                    {
+                        snakeNewHead.col = (snakeNewHead.col + Console.WindowWidth) % Console.WindowWidth;
+                        snakeNewHead.row = (snakeNewHead.row + height) % height;
+                    }
 
                     //points count
                     int userPoints = (snakeElements.Count - 4) + bonusPoints;
@@ -314,7 +317,7 @@ namespace Snake
                         Position obstacle = new Position();
                         do
                         {
-                            obstacle = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight),
+                            obstacle = new Position(randomNumbersGenerator.Next(0, height),
                                 randomNumbersGenerator.Next(0, Console.WindowWidth));
                         }
                         while (snakeElements.Contains(obstacle) ||
@@ -373,7 +376,7 @@ namespace Snake
             while (counterX < numberOfObstacles)
             {
                 Position obstacle = new Position();
-                obstacle = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight),
+                obstacle = new Position(randomNumbersGenerator.Next(0, height),
                     randomNumbersGenerator.Next(0, Console.WindowWidth));
                 if (obstacles.Contains(obstacle))
                 {
@@ -542,7 +545,7 @@ namespace Snake
 
             do
             {
-                life = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight),
+                life = new Position(randomNumbersGenerator.Next(0, height),
                     randomNumbersGenerator.Next(0, Console.WindowWidth));
             }
             while (snakeElements.Contains(life) || obstacles.Contains(food));
@@ -561,7 +564,7 @@ namespace Snake
             {
                 do
                 {
-                    XFood = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight),
+                    XFood = new Position(randomNumbersGenerator.Next(0, height),
                         randomNumbersGenerator.Next(0, Console.WindowWidth));
                 }
                 while (snakeElements.Contains(XFood) || obstacles.Contains(XFood));
@@ -572,7 +575,7 @@ namespace Snake
 
             do
             {
-                food = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight),
+                food = new Position(randomNumbersGenerator.Next(0, height),
                     randomNumbersGenerator.Next(0, Console.WindowWidth));
             }
             while (snakeElements.Contains(food) || obstacles.Contains(food));
