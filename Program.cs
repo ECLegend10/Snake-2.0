@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows.Media;
 using System.Media;
 using System.IO;
+using System.Security.Principal;
 
 namespace Snake
 {
@@ -108,15 +109,17 @@ namespace Snake
                 SoundPlayer changeEffect = new SoundPlayer(@"..\..\sounds\changePosition.wav");//sound effect when changing directions
                 SoundPlayer eatEffect = new SoundPlayer(@"..\..\sounds\munchApple.wav");//sound effect when eating an apple
                 SoundPlayer ObstacleEffect = new SoundPlayer(@"..\..\sounds\obstacleHit.wav");//sound effect when an obstacle is hit
-
+                
                 while (gameLoop)
                 {
+                    
                     backgroundMusic.Play();
                     if (backgroundMusic.Position >= new TimeSpan(0, 1, 25))
                     {
                         backgroundMusic.Position = new TimeSpan(0, 0, 0);
                     }
 
+                   
                     // Control direction of snake
                     if (Console.KeyAvailable)
                     {
@@ -139,6 +142,7 @@ namespace Snake
                             if (direction != up) direction = down;
                         }
                     }
+
 
                     // Reassign snake's head after crossing border
                     Position snakeHead = snakeElements.Last();  // Head at end of queue
@@ -254,6 +258,7 @@ namespace Snake
                         Console.SetCursorPosition(0, 0);
                         Console.WriteLine("Current points: {0}", userPoints);
                         Console.WriteLine("Current Life: {0}", snakeHealth);
+                        
                     }
 
                     Console.SetCursorPosition(snakeHead.col, snakeHead.row);
@@ -358,11 +363,11 @@ namespace Snake
 
                     sleepTime -= 0.01;
 
+                    Console.SetCursorPosition(0, 0);
                     Thread.Sleep((int)sleepTime);
                 }
                 ClearSnake();
                 backgroundMusic.Stop();
-
             }
         }
 
