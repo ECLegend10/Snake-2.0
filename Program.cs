@@ -553,7 +553,7 @@ namespace Snake
         {
             do
             {
-                life = new Position(randomNumbersGenerator.Next(2, height),
+                life = new Position(randomNumbersGenerator.Next(0, height),
                     randomNumbersGenerator.Next(0, Console.WindowWidth));
             }
             while (snakeElements.Contains(life) || obstacles.Contains(food));
