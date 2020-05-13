@@ -255,11 +255,12 @@ namespace Snake
                         
                         //reset score display
                         Console.ForegroundColor = ConsoleColor.Gray;
-                        Console.SetCursorPosition(0, 0);
+                        Console.SetCursorPosition(0, height);
                         Console.WriteLine("Current points:      ");
                         //display score
-                        Console.SetCursorPosition(0, 0);
+                        Console.SetCursorPosition(0, height);
                         Console.WriteLine("Current points: {0}", userPoints);
+                        Console.SetCursorPosition(20, height);
                         Console.WriteLine("Current Life: {0}", snakeHealth);
                         
                     }
@@ -325,7 +326,7 @@ namespace Snake
                         Position obstacle = new Position();
                         do
                         {
-                            obstacle = new Position(randomNumbersGenerator.Next(2, height),
+                            obstacle = new Position(randomNumbersGenerator.Next(0, height),
                                 randomNumbersGenerator.Next(0, Console.WindowWidth));
                         }
                         while (snakeElements.Contains(obstacle) ||
@@ -384,7 +385,7 @@ namespace Snake
             while (counterX < numberOfObstacles)
             {
                 Position obstacle = new Position();
-                obstacle = new Position(randomNumbersGenerator.Next(2, height),
+                obstacle = new Position(randomNumbersGenerator.Next(0, height),
                     randomNumbersGenerator.Next(0, Console.WindowWidth));
                 if (obstacles.Contains(obstacle))
                 {
@@ -543,7 +544,7 @@ namespace Snake
         {
             for (int i = 0; i <= initSnakeLength; i++) //change the initial length of snake from 5 to 3
             {
-                snakeElements.Enqueue(new Position(2, i));
+                snakeElements.Enqueue(new Position(0, i));
             }
         }
 
@@ -571,7 +572,7 @@ namespace Snake
             {
                 do
                 {
-                    XFood = new Position(randomNumbersGenerator.Next(2, height),
+                    XFood = new Position(randomNumbersGenerator.Next(0, height),
                         randomNumbersGenerator.Next(0, Console.WindowWidth));
                 }
                 while (snakeElements.Contains(XFood) || obstacles.Contains(XFood));
@@ -582,7 +583,7 @@ namespace Snake
 
             do
             {
-                food = new Position(randomNumbersGenerator.Next(2, height),
+                food = new Position(randomNumbersGenerator.Next(0, height),
                     randomNumbersGenerator.Next(0, Console.WindowWidth));
             }
             while (snakeElements.Contains(food) || obstacles.Contains(food));
