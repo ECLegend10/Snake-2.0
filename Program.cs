@@ -409,11 +409,15 @@ namespace Snake
         public static int GameMenu(string[] lMenuOptions)
         {
             Console.SetCursorPosition(0, 0);
-            Console.WriteLine("SNAKE GAME!");
+            Console.WriteLine(" ______  __   __  ______  __  __  ______       ______  ______  __    __  ______    ");
+            Console.WriteLine("/\\  ___\\/\\ \"-.\\ \\/\\  __ \\/\\ \\/ / /\\  ___\\     /\\  ___\\/\\  __ \\/\\ \"-./  \\/\\  ___\\   ");
+            Console.WriteLine("\\ \\___  \\ \\ \\-.  \\ \\  __ \\ \\  _\"-\\ \\  __\\     \\ \\ \\__ \\ \\  __ \\ \\ \\-./\\ \\ \\  __\\   ");
+            Console.WriteLine(" \\/\\_____\\ \\_\\\\\"\\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_____\\    \\ \\_____\\ \\_\\ \\_\\ \\_\\ \\ \\_\\ \\_____\\ ");
+            Console.WriteLine("  \\/_____/\\/_/ \\/_/\\/_/\\/_/\\/_/\\/_/\\/_____/     \\/_____/\\/_/\\/_/\\/_/  \\/_/\\/_____/ ");
 
             //positions and spacing for printing the menu options
             const int startX = 5;
-            const int startY = 3;
+            const int startY = 7;
             const int choiceSpacing = 5;
 
             int lcurrentChoice = 0;//get menu item that the user is pointing at
@@ -501,8 +505,12 @@ namespace Snake
         //Get userName to be store in the text file
         public static void GetUserName(ref string aName)
         {
-            Console.WriteLine("SNAKE GAME!");
-            Console.WriteLine("What is your name?");
+            Console.WriteLine(" ______  __   __  ______  __  __  ______       ______  ______  __    __  ______    ");
+            Console.WriteLine("/\\  ___\\/\\ \"-.\\ \\/\\  __ \\/\\ \\/ / /\\  ___\\     /\\  ___\\/\\  __ \\/\\ \"-./  \\/\\  ___\\   ");
+            Console.WriteLine("\\ \\___  \\ \\ \\-.  \\ \\  __ \\ \\  _\"-\\ \\  __\\     \\ \\ \\__ \\ \\  __ \\ \\ \\-./\\ \\ \\  __\\   ");
+            Console.WriteLine(" \\/\\_____\\ \\_\\\\\"\\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_____\\    \\ \\_____\\ \\_\\ \\_\\ \\_\\ \\ \\_\\ \\_____\\ ");
+            Console.WriteLine("  \\/_____/\\/_/ \\/_/\\/_/\\/_/\\/_/\\/_/\\/_____/     \\/_____/\\/_/\\/_/\\/_/  \\/_/\\/_____/ ");
+            Console.WriteLine("\n\nWhat is your name?");
             aName = Console.ReadLine();
             Console.Clear();
         }
