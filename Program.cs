@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,6 +29,7 @@ namespace Snake
         static List<Position> obstacles = new List<Position>() { };
         static Queue<Position> snakeElements = new Queue<Position>();
         static Position food;
+        static Position food2;
         static Position XFood;
         static Position life;
         //Window's Height - 1 to prevent corner issue
@@ -36,6 +37,7 @@ namespace Snake
 
         static void Main(string[] args)
         {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
             while (true)
             {
                 bool gameLoop = true; //this is used so that the player could go back to main menu after played the game
@@ -205,9 +207,9 @@ namespace Snake
 
                     }
 
-                        // If the snake hits itself or has 0 health
-                        // added new rule which is the game ends when the snake is gone
-                        if (snakeElements.Contains(snakeNewHead) || snakeHealth == 0 || snakeElements.Count == 0)
+                    // If the snake hits itself or has 0 health
+                    // added new rule which is the game ends when the snake is gone
+                    if (snakeElements.Contains(snakeNewHead) || snakeHealth == 0 || snakeElements.Count == 0)
                     {
                         ObstacleEffect.Play();
                         Thread.Sleep(500);
@@ -252,7 +254,6 @@ namespace Snake
                     }
                     else
                     {
-                        
                         //reset score display
                         Console.ForegroundColor = ConsoleColor.Gray;
                         //Console.SetCursorPosition(0, height);
@@ -305,16 +306,24 @@ namespace Snake
                         
                     }
 
-                        // If snake consumes X food:
-                        if (snakeNewHead.col == XFood.col && snakeNewHead.row == XFood.row)
+                    // If snake consumes X food:
+                    if (snakeNewHead.col == XFood.col && snakeNewHead.row == XFood.row)
                     {
                         eatEffect.Play();
                         superXFoodEffect = true;
                     }
 
                     // If snake consumes the food:
-                    if (snakeNewHead.col == food.col && snakeNewHead.row == food.row)
+                    if ((snakeNewHead.col == food.col && snakeNewHead.row == food.row) || (snakeNewHead.col == food2.col && snakeNewHead.row == food2.row))
                     {
+                        if (snakeNewHead.col == food.col && snakeNewHead.row == food.row) {
+                            Console.SetCursorPosition(food2.col, food2.row);
+                            Console.Write(" ");
+                        } else {
+                            Console.SetCursorPosition(food.col, food.row);
+                            Console.Write(" ");
+                        }
+
                         // Add bonus point to score after eating X.
                         if (superXFoodEffect == true) {
                             bonusPoints++;
@@ -345,7 +354,7 @@ namespace Snake
                         obstacles.Add(obstacle);
                         Console.SetCursorPosition(obstacle.col, obstacle.row);
                         Console.ForegroundColor = ConsoleColor.Cyan;
-                        Console.Write("=");
+                        Console.Write("▒");
                     }
                     else
                     {
@@ -416,7 +425,7 @@ namespace Snake
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.SetCursorPosition(obstacle.col, obstacle.row);
-                Console.Write("=");
+                Console.Write("▒");
             }
         }
 
@@ -594,7 +603,7 @@ namespace Snake
         // Create Food
         public static void createFood()
         {
-            int clickPercentage = 20;  // 10 percent chance to generate bonus food.
+            int clickPercentage = 20;  // 20 percent chance to generate bonus food.
             int randomValueBetween0And99 = randomNumbersGenerator.Next(100);
             int FoodYLocation = randomNumbersGenerator.Next(0, Console.WindowHeight);
             if (FoodYLocation < 6)//checks if it is spawned in the header area
@@ -624,13 +633,21 @@ namespace Snake
 
             do
             {
-                food = new Position(FoodYLocation,
-                    randomNumbersGenerator.Next(0, Console.WindowWidth));
+                int nFoodXLocation = randomNumbersGenerator.Next(0, Console.WindowWidth);
+                food = new Position(FoodYLocation, nFoodXLocation - 1);
+                if (nFoodXLocation == Console.WindowWidth) {
+                    food2 = new Position(FoodYLocation, nFoodXLocation - 2);
+                } else {
+                    food2 = new Position(FoodYLocation, nFoodXLocation);
+                }
             }
-            while (snakeElements.Contains(food) || obstacles.Contains(food));
+            while ((snakeElements.Contains(food) || obstacles.Contains(food)) || (snakeElements.Contains(food2) || obstacles.Contains(food2)));
             Console.SetCursorPosition(food.col, food.row);
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write("@");
+            Console.Write("\u2665");
+            Console.SetCursorPosition(food2.col, food2.row);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write("\u2665");
         }
 
         public static void DifficultyEffect(int diff, ref double sleepTime, ref int snakeLengthInit, ref int numberOfObstaclesInit, ref int foodDissapearTime)
