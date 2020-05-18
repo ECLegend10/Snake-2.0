@@ -255,8 +255,8 @@ namespace Snake
                         
                         //reset score display
                         Console.ForegroundColor = ConsoleColor.Gray;
-                        Console.SetCursorPosition(0, height);
-                        Console.WriteLine("Current points:      ");
+                        //Console.SetCursorPosition(0, height);
+                        //Console.WriteLine("Current points:      ");
                         //display score
                         Console.SetCursorPosition(0, 0);
                         Console.WriteLine("Game Information for {0}:",userName);
