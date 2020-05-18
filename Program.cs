@@ -155,7 +155,7 @@ namespace Snake
 
                     if (snakeNewHead.col < 0) snakeNewHead.col = Console.WindowWidth - 1;
                     if (snakeNewHead.row < 5) snakeNewHead.row = Console.WindowHeight - 1; // if it reaches the info header
-                    if (snakeNewHead.row >= Console.WindowHeight) snakeNewHead.row = 5;
+                    if (snakeNewHead.row >= Console.WindowHeight) snakeNewHead.row = 5;// if it goes to the bottom, it will come out from the info header
                     if (snakeNewHead.col >= Console.WindowWidth) snakeNewHead.col = 0;
 
                     //points count
@@ -391,9 +391,9 @@ namespace Snake
             {
                 Position obstacle = new Position();
                 int obstacleYLocation = randomNumbersGenerator.Next(0, Console.WindowHeight);
-                if (obstacleYLocation < 3)
+                if (obstacleYLocation < 6)//checks if it is spawned in the header area
                 {
-                    obstacleYLocation += 3;
+                    obstacleYLocation += 6;
                 }
                 obstacle = new Position(obstacleYLocation,
                     randomNumbersGenerator.Next(0, Console.WindowWidth));
@@ -562,7 +562,7 @@ namespace Snake
         public static void GenerateLife()
         {
             int LifeYLocation = randomNumbersGenerator.Next(0, Console.WindowHeight);
-            if (LifeYLocation < 6)
+            if (LifeYLocation < 6)//checks if it is spawned in the header area
             {
                 LifeYLocation += 6;
             }
@@ -584,7 +584,7 @@ namespace Snake
             int clickPercentage = 10;  // 10 percent chance to generate bonus food.
             int randomValueBetween0And99 = randomNumbersGenerator.Next(100);
             int FoodYLocation = randomNumbersGenerator.Next(0, Console.WindowHeight);
-            if (FoodYLocation < 6)
+            if (FoodYLocation < 6)//checks if it is spawned in the header area
             {
                 FoodYLocation += 6;
             }
