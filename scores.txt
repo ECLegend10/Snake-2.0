@@ -1,9 +1,11 @@
 loloplololoplo,90
+g,20
 g,19
 b,16
 g,11
 dsgdgsdvsdvdsvsv,10
 Alvin,5
+g,4
 Ben,3
 Elwin,2
 f,2

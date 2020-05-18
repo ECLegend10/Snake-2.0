@@ -31,6 +31,8 @@ namespace Snake
         static Position food;
         static Position XFood;
         static Position life;
+        //Window's Height - 1 to prevent corner issue
+        public static int height = Console.WindowHeight - 1;
 
         static void Main(string[] args)
         {
@@ -88,7 +90,6 @@ namespace Snake
                 };
                 
                 int direction = right;
-                Console.BufferHeight = Console.WindowHeight;
                 lastFoodTime = Environment.TickCount;
 
                 initialiseObstacles(numberOfObstaclesInit);
@@ -152,6 +153,7 @@ namespace Snake
                     // If crossed border, move to other end of the terminal
                     Position snakeNewHead = new Position(snakeHead.row + nextDirection.row,
                         snakeHead.col + nextDirection.col);
+
 
                     if (snakeNewHead.col < 0) snakeNewHead.col = Console.WindowWidth - 1;
                     if (snakeNewHead.row < 5) snakeNewHead.row = Console.WindowHeight - 1; // if it reaches the info header
@@ -253,7 +255,7 @@ namespace Snake
                         
                         //reset score display
                         Console.ForegroundColor = ConsoleColor.Gray;
-                        Console.SetCursorPosition(0, 0);
+                        Console.SetCursorPosition(0, height);
                         Console.WriteLine("Current points:      ");
                         //display score
                         Console.SetCursorPosition(0, 0);
@@ -319,6 +321,9 @@ namespace Snake
                             superXFoodEffect = false;
                         }
 
+                        Console.SetCursorPosition(XFood.col, XFood.row);
+                        Console.Write(" ");
+
                         eatEffect.Play();
                         createFood();
                         // feeding the snake
@@ -331,7 +336,7 @@ namespace Snake
                         Position obstacle = new Position();
                         do
                         {
-                            obstacle = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight),
+                            obstacle = new Position(randomNumbersGenerator.Next(0, height),
                                 randomNumbersGenerator.Next(0, Console.WindowWidth));
                         }
                         while (snakeElements.Contains(obstacle) ||
@@ -419,11 +424,15 @@ namespace Snake
         public static int GameMenu(string[] lMenuOptions)
         {
             Console.SetCursorPosition(0, 0);
-            Console.WriteLine("SNAKE GAME!");
+            Console.WriteLine(" ______  __   __  ______  __  __  ______       ______  ______  __    __  ______    ");
+            Console.WriteLine("/\\  ___\\/\\ \"-.\\ \\/\\  __ \\/\\ \\/ / /\\  ___\\     /\\  ___\\/\\  __ \\/\\ \"-./  \\/\\  ___\\   ");
+            Console.WriteLine("\\ \\___  \\ \\ \\-.  \\ \\  __ \\ \\  _\"-\\ \\  __\\     \\ \\ \\__ \\ \\  __ \\ \\ \\-./\\ \\ \\  __\\   ");
+            Console.WriteLine(" \\/\\_____\\ \\_\\\\\"\\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_____\\    \\ \\_____\\ \\_\\ \\_\\ \\_\\ \\ \\_\\ \\_____\\ ");
+            Console.WriteLine("  \\/_____/\\/_/ \\/_/\\/_/\\/_/\\/_/\\/_/\\/_____/     \\/_____/\\/_/\\/_/\\/_/  \\/_/\\/_____/ ");
 
             //positions and spacing for printing the menu options
             const int startX = 5;
-            const int startY = 3;
+            const int startY = 7;
             const int choiceSpacing = 5;
 
             int lcurrentChoice = 0;//get menu item that the user is pointing at
@@ -511,8 +520,12 @@ namespace Snake
         //Get userName to be store in the text file
         public static void GetUserName(ref string aName)
         {
-            Console.WriteLine("SNAKE GAME!");
-            Console.WriteLine("What is your name?");
+            Console.WriteLine(" ______  __   __  ______  __  __  ______       ______  ______  __    __  ______    ");
+            Console.WriteLine("/\\  ___\\/\\ \"-.\\ \\/\\  __ \\/\\ \\/ / /\\  ___\\     /\\  ___\\/\\  __ \\/\\ \"-./  \\/\\  ___\\   ");
+            Console.WriteLine("\\ \\___  \\ \\ \\-.  \\ \\  __ \\ \\  _\"-\\ \\  __\\     \\ \\ \\__ \\ \\  __ \\ \\ \\-./\\ \\ \\  __\\   ");
+            Console.WriteLine(" \\/\\_____\\ \\_\\\\\"\\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_____\\    \\ \\_____\\ \\_\\ \\_\\ \\_\\ \\ \\_\\ \\_____\\ ");
+            Console.WriteLine("  \\/_____/\\/_/ \\/_/\\/_/\\/_/\\/_/\\/_/\\/_____/     \\/_____/\\/_/\\/_/\\/_/  \\/_/\\/_____/ ");
+            Console.WriteLine("\n\nWhat is your name?");
             aName = Console.ReadLine();
             Console.Clear();
         }
@@ -581,7 +594,7 @@ namespace Snake
         // Create Food
         public static void createFood()
         {
-            int clickPercentage = 10;  // 10 percent chance to generate bonus food.
+            int clickPercentage = 20;  // 10 percent chance to generate bonus food.
             int randomValueBetween0And99 = randomNumbersGenerator.Next(100);
             int FoodYLocation = randomNumbersGenerator.Next(0, Console.WindowHeight);
             if (FoodYLocation < 6)//checks if it is spawned in the header area
