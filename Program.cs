@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Media;
 using System.IO;
 using System.Security.Principal;
+using System.Windows.Input;
 
 namespace Snake
 {
@@ -153,12 +154,11 @@ namespace Snake
                     Position snakeNewHead = new Position(snakeHead.row + nextDirection.row,
                         snakeHead.col + nextDirection.col);
 
-                    if (snakeNewHead.col < 0 || snakeNewHead.row < 0
-                   || snakeNewHead.col >= Console.WindowWidth || snakeNewHead.row >= height)
-                    {
-                        snakeNewHead.col = (snakeNewHead.col + Console.WindowWidth) % Console.WindowWidth;
-                        snakeNewHead.row = (snakeNewHead.row + height) % height;
-                    }
+
+                    if (snakeNewHead.col < 0) snakeNewHead.col = Console.WindowWidth - 1;
+                    if (snakeNewHead.row < 5) snakeNewHead.row = Console.WindowHeight - 1; // if it reaches the info header
+                    if (snakeNewHead.row >= Console.WindowHeight) snakeNewHead.row = 5;// if it goes to the bottom, it will come out from the info header
+                    if (snakeNewHead.col >= Console.WindowWidth) snakeNewHead.col = 0;
 
                     //points count
                     int userPoints = (snakeElements.Count - 4) + bonusPoints;
@@ -258,11 +258,21 @@ namespace Snake
                         Console.SetCursorPosition(0, height);
                         Console.WriteLine("Current points:      ");
                         //display score
-                        Console.SetCursorPosition(0, height);
+                        Console.SetCursorPosition(0, 0);
+                        Console.WriteLine("Game Information for {0}:",userName);
+                        if (userPoints >= 30)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                        }
+                        else 
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                        }
                         Console.WriteLine("Current points: {0}", userPoints);
-                        Console.SetCursorPosition(20, height);
+                        Console.ForegroundColor = ConsoleColor.Gray;
                         Console.WriteLine("Current Life: {0}", snakeHealth);
-                        
+                        Console.WriteLine();
+                        Console.WriteLine("________________________________________________________________________________________________________________________");
                     }
 
                     Console.SetCursorPosition(snakeHead.col, snakeHead.row);
@@ -385,7 +395,12 @@ namespace Snake
             while (counterX < numberOfObstacles)
             {
                 Position obstacle = new Position();
-                obstacle = new Position(randomNumbersGenerator.Next(0, height),
+                int obstacleYLocation = randomNumbersGenerator.Next(0, Console.WindowHeight);
+                if (obstacleYLocation < 6)//checks if it is spawned in the header area
+                {
+                    obstacleYLocation += 6;
+                }
+                obstacle = new Position(obstacleYLocation,
                     randomNumbersGenerator.Next(0, Console.WindowWidth));
                 if (obstacles.Contains(obstacle))
                 {
@@ -552,16 +567,21 @@ namespace Snake
         {
             for (int i = 0; i <= initSnakeLength; i++) //change the initial length of snake from 5 to 3
             {
-                snakeElements.Enqueue(new Position(0, i));
+                snakeElements.Enqueue(new Position(6, i));
             }
         }
 
         //Generate the health bonus
         public static void GenerateLife()
         {
+            int LifeYLocation = randomNumbersGenerator.Next(0, Console.WindowHeight);
+            if (LifeYLocation < 6)//checks if it is spawned in the header area
+            {
+                LifeYLocation += 6;
+            }
             do
             {
-                life = new Position(randomNumbersGenerator.Next(0, height),
+                life = new Position(LifeYLocation,
                     randomNumbersGenerator.Next(0, Console.WindowWidth));
             }
             while (snakeElements.Contains(life) || obstacles.Contains(food));
@@ -576,11 +596,24 @@ namespace Snake
         {
             int clickPercentage = 20;  // 10 percent chance to generate bonus food.
             int randomValueBetween0And99 = randomNumbersGenerator.Next(100);
+            int FoodYLocation = randomNumbersGenerator.Next(0, Console.WindowHeight);
+            if (FoodYLocation < 6)//checks if it is spawned in the header area
+            {
+                FoodYLocation += 6;
+            }
+
+            int ExtraFoodYLocation = randomNumbersGenerator.Next(0, Console.WindowHeight);
+            if (ExtraFoodYLocation < 6)
+            {
+                ExtraFoodYLocation += 6;
+            }
+
+
             if (randomValueBetween0And99 < clickPercentage)
             {
                 do
                 {
-                    XFood = new Position(randomNumbersGenerator.Next(0, height),
+                    XFood = new Position(ExtraFoodYLocation,
                         randomNumbersGenerator.Next(0, Console.WindowWidth));
                 }
                 while (snakeElements.Contains(XFood) || obstacles.Contains(XFood));
@@ -591,7 +624,7 @@ namespace Snake
 
             do
             {
-                food = new Position(randomNumbersGenerator.Next(0, height),
+                food = new Position(FoodYLocation,
                     randomNumbersGenerator.Next(0, Console.WindowWidth));
             }
             while (snakeElements.Contains(food) || obstacles.Contains(food));
