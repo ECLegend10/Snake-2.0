@@ -32,8 +32,6 @@ namespace Snake
         static Position food2;
         static Position XFood;
         static Position life;
-        //Window's Height - 1 to prevent corner issue
-        public static int height = Console.WindowHeight - 1;
 
         static void Main(string[] args)
         {
@@ -256,8 +254,6 @@ namespace Snake
                     {
                         //reset score display
                         Console.ForegroundColor = ConsoleColor.Gray;
-                        //Console.SetCursorPosition(0, height);
-                        //Console.WriteLine("Current points:      ");
                         //display score
                         Console.SetCursorPosition(0, 0);
                         Console.WriteLine("Game Information for {0}:",userName);
@@ -269,9 +265,17 @@ namespace Snake
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
                         }
+                        Console.SetCursorPosition(0, 1);
+                        Console.WriteLine("Current points:      ");
+                        Console.SetCursorPosition(0, 1);
                         Console.WriteLine("Current points: {0}", userPoints);
                         Console.ForegroundColor = ConsoleColor.Gray;
                         Console.WriteLine("Current Life: {0}", snakeHealth);
+                        //display timer for the duration of food
+                        Console.SetCursorPosition(50, 1);
+                        Console.WriteLine("The food will dissapear in:      ");
+                        Console.SetCursorPosition(50, 1);
+                        Console.WriteLine("The food will dissapear in: {0}s", ((foodDissapearTime / 1000) - (Environment.TickCount - lastFoodTime) / 1000));
                         Console.WriteLine();
                         Console.WriteLine("________________________________________________________________________________________________________________________");
                     }
@@ -345,7 +349,7 @@ namespace Snake
                         Position obstacle = new Position();
                         do
                         {
-                            obstacle = new Position(randomNumbersGenerator.Next(0, height),
+                            obstacle = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight - 1),
                                 randomNumbersGenerator.Next(0, Console.WindowWidth));
                         }
                         while (snakeElements.Contains(obstacle) ||
