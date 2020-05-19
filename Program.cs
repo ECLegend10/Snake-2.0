@@ -32,8 +32,7 @@ namespace Snake
         static Position food2;
         static Position XFood;
         static Position life;
-        //Window's Height - 1 to prevent corner issue
-        public static int height = Console.WindowHeight - 1;
+        static List<string[]> scoreboard = ReadScores(); //Scoreboard from text file
 
         static void Main(string[] args)
         {
@@ -45,7 +44,7 @@ namespace Snake
                 string userName = ""; //Player's name
                 int difficultyLevel = 99;  // Player's selected difficulty.
                 int chooseColour = 0; //Player's selected colour's index
-
+                
                 string[] lMenuOptions = new string[4] { "Play", "Scores", "\tHelp", " Exit" };
                 string[] lDifficultyOptions = new string[3] { "Easy", " Intermediate", "\t\tHardcore"};
                 string[] lColourOptions = new string[3] { "Red", "Blue", "\tGreen" };
@@ -256,8 +255,6 @@ namespace Snake
                     {
                         //reset score display
                         Console.ForegroundColor = ConsoleColor.Gray;
-                        //Console.SetCursorPosition(0, height);
-                        //Console.WriteLine("Current points:      ");
                         //display score
                         Console.SetCursorPosition(0, 0);
                         Console.WriteLine("Game Information for {0}:",userName);
@@ -269,10 +266,27 @@ namespace Snake
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
                         }
+                        Console.SetCursorPosition(0, 1);
+                        Console.WriteLine("Current points:      ");
+                        Console.SetCursorPosition(0, 1);
                         Console.WriteLine("Current points: {0}", userPoints);
                         Console.ForegroundColor = ConsoleColor.Gray;
                         Console.WriteLine("Current Life: {0}", snakeHealth);
                         Console.WriteLine();
+                        //display timer for the duration of food
+                        Console.SetCursorPosition(40, 1);
+                        Console.WriteLine("The food will dissapear in:      ");
+                        Console.SetCursorPosition(40, 1);
+                        Console.WriteLine("The food will dissapear in: {0}s", ((foodDissapearTime / 1000) - (Environment.TickCount - lastFoodTime) / 1000));
+                        //display top 3 of the scoreboard
+                        Console.SetCursorPosition(80, 0);
+                        Console.WriteLine("Scoreboard for Top 3:");
+                        for (int i = 0; i < 3; i++)
+                        {
+                            Console.SetCursorPosition(80, i+1);
+                            Console.WriteLine("{0}) {1}\t{2}", i+1, scoreboard[i][0], scoreboard[i][1]);
+                        }
+                        Console.SetCursorPosition(0, 4);
                         Console.WriteLine("________________________________________________________________________________________________________________________");
                     }
 
@@ -345,7 +359,7 @@ namespace Snake
                         Position obstacle = new Position();
                         do
                         {
-                            obstacle = new Position(randomNumbersGenerator.Next(0, height),
+                            obstacle = new Position(randomNumbersGenerator.Next(0, Console.WindowHeight - 1),
                                 randomNumbersGenerator.Next(0, Console.WindowWidth));
                         }
                         while (snakeElements.Contains(obstacle) ||
@@ -516,7 +530,7 @@ namespace Snake
             }
             else if (aUserChoice == 1)  // Scores Menu
             {
-                ReadScores();
+                DisplayScores();
                 return false;
             }
             else if (aUserChoice == 0)  // Play Snake Game
@@ -688,64 +702,23 @@ namespace Snake
             }
         }
 
-        public static bool ReadScores()
+        public static List<string[]> ReadScores()
         {
             //score txt file
             string mapFile = @"..\..\scores.txt";
-            Console.WriteLine("User Scores Board");
-            Console.WriteLine("\tUsername \t\t\tScore");
 
             if (File.Exists(mapFile))
             {
                 // Read a text file line by line.
                 string[] lines = File.ReadAllLines(mapFile);
-                string[] score;
-                //for aligning the score
-                int tabNum = 4;
-                string tab = "";
-                //to organize the string to be written
-                string output = "";
-                int inc = 1; //increment to show ranking
+                List<string[]> scores = new List<string[]>();
 
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                //the split will be used used when username is added
+                //get every line from the text file
                 foreach (string line in lines)
                 {
-                    //only top 20 is shown
-                    if (inc <= 20)
-                    {
-                        score = line.Split(',');
-                        //align score (through different amount of tab)
-                        tabNum = 4 - (score[0].Length / 8);
-                        for (int i = 0; i < tabNum; i++)
-                        {
-                            tab += "\t";
-                        }
-                        //optional for name with 7 letters
-                        if (score[0].Length == 7)
-                        {
-                            tab = "\t\t\t";
-                        }
-                        output = inc.ToString() + ")\t " + score[0] + tab + " " + score[1];
-                        Console.WriteLine(output);
-                        inc++;
-                        tab = "";
-                    }
+                    scores.Add(line.Split(','));
                 }
-                Console.ResetColor();
-
-                Console.WriteLine("\n\nPress ENTER key to go back to menu");
-                ConsoleKeyInfo userInput = Console.ReadKey();
-
-                //waits for user to press enter to exit help menu
-                while (userInput.Key != ConsoleKey.Enter)
-                {
-                    userInput = Console.ReadKey();
-
-                }
-                Console.Clear();
-
-                return true;
+                return scores;
             }
             else
             {
@@ -753,8 +726,59 @@ namespace Snake
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.SetCursorPosition((Console.WindowWidth - errMsg.Length) / 2, Console.WindowHeight / 4);
                 Console.WriteLine(errMsg);
-                return false;
+                return null;
             }
+        }
+
+        public static void DisplayScores()
+        {
+            Console.WriteLine("User Scores Board");
+            Console.WriteLine("\tUsername \t\t\tScore");
+
+
+            //for aligning the score
+            int tabNum = 4;
+            string tab = "";
+            //to organize the string to be written
+            string output = "";
+            int inc = 1; //increment to show ranking    
+
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            //the split will be used used when username is added
+            foreach (string[] score in scoreboard)
+            {
+                //only top 20 is shown
+                if (inc <= 20)
+                {
+                    //align score (through different amount of tab)
+                    tabNum = 4 - (score[0].Length / 8);
+                    for (int i = 0; i < tabNum; i++)
+                    {
+                        tab += "\t";
+                    }
+                    //optional for name with 7 letters
+                    if (score[0].Length == 7)
+                    {
+                        tab = "\t\t\t";
+                    }
+                    output = inc.ToString() + ")\t " + score[0] + tab + " " + score[1];
+                    Console.WriteLine(output);
+                    inc++;
+                    tab = "";
+                }
+            }
+            Console.ResetColor();
+
+            Console.WriteLine("\n\nPress ENTER key to go back to menu");
+            ConsoleKeyInfo userInput = Console.ReadKey();
+
+            //waits for user to press enter to exit help menu
+            while (userInput.Key != ConsoleKey.Enter)
+            {
+                userInput = Console.ReadKey();
+
+            }
+            Console.Clear();
         }
 
 
@@ -768,15 +792,8 @@ namespace Snake
 
             if (File.Exists(mapFile))
             {
-                // Read a text file line by line.
-                string[] lines = File.ReadAllLines(mapFile);
-                List<string[]> scores = new List<string[]>();
+                List<string[]> scores = scoreboard;
 
-                //get every line from the text file
-                foreach (string line in lines)
-                {
-                    scores.Add(line.Split(','));
-                }
                 //Add in the latest score
                 string[] newScore = { aName, aScore.ToString() };
                 scores.Add(newScore);
