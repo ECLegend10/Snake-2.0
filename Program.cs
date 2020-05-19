@@ -386,6 +386,8 @@ namespace Snake
                         //negativePoints = negativePoints + 50;  // Additional negative points (no needed as the snake is shorter)
                         Console.SetCursorPosition(food.col, food.row);
                         Console.Write(" ");
+                        Console.SetCursorPosition(food2.col, food2.row);
+                        Console.Write(" ");
                         Console.SetCursorPosition(XFood.col, XFood.row);
                         Console.Write(" ");
                         createFood();
