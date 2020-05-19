@@ -144,6 +144,19 @@ namespace Snake
                         {
                             if (direction != up) direction = down;
                         }
+                        // Pause during gameplay
+                        if (userInput.Key == ConsoleKey.P)
+                        {
+                            Console.SetCursorPosition(0, 4);
+                            Console.ForegroundColor = ConsoleColor.Gray;
+                            Console.WriteLine("Game paused. Press any key to continue.");
+                            Console.SetCursorPosition(0, 0);
+                            Console.Write("G");
+                            Console.ReadKey();
+                            Console.SetCursorPosition(0, 4);
+                            Console.WriteLine("                                       ");
+                            Console.ForegroundColor = snakeColor;
+                        }
                     }
 
 
@@ -157,7 +170,7 @@ namespace Snake
 
 
                     if (snakeNewHead.col < 0) snakeNewHead.col = Console.WindowWidth - 1;
-                    if (snakeNewHead.row < 5) snakeNewHead.row = Console.WindowHeight - 1; // if it reaches the info header
+                    if (snakeNewHead.row < 6) snakeNewHead.row = Console.WindowHeight - 1; // if it reaches the info header
                     if (snakeNewHead.row >= Console.WindowHeight) snakeNewHead.row = 5;// if it goes to the bottom, it will come out from the info header
                     if (snakeNewHead.col >= Console.WindowWidth) snakeNewHead.col = 0;
 
@@ -286,7 +299,7 @@ namespace Snake
                             Console.SetCursorPosition(80, i+1);
                             Console.WriteLine("{0}) {1}\t{2}", i+1, scoreboard[i][0], scoreboard[i][1]);
                         }
-                        Console.SetCursorPosition(0, 4);
+                        Console.SetCursorPosition(0, 5);
                         Console.WriteLine("________________________________________________________________________________________________________________________");
                     }
 
