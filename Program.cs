@@ -10,6 +10,7 @@ using System.IO;
 using System.Security.Principal;
 using System.Windows.Input;
 
+
 namespace Snake
 {
     struct Position
@@ -122,8 +123,11 @@ namespace Snake
 
                 //Below are the music packs
                 MediaPlayer backgroundMusic = new MediaPlayer();//Continous background music
-                backgroundMusic.Open(new System.Uri(Path.Combine(System.IO.Directory.GetCurrentDirectory(), @"..\..\sounds\\backgroundMusic.wav")));
-
+                string[] BGMusicDirectories = new string[3] { "..\\..\\sounds\\backgroundMusic.wav", "..\\..\\sounds\\backgroundMusic2.wav", "..\\..\\sounds\\backgroundMusic3.wav" };
+                //third song might be abit louder than the others
+                int MusicCounter = 0;
+                backgroundMusic.Open(new System.Uri(Path.Combine(System.IO.Directory.GetCurrentDirectory(), @BGMusicDirectories[MusicCounter])));
+                
 
                 SoundPlayer changeEffect = new SoundPlayer(@"..\..\sounds\changePosition.wav");//sound effect when changing directions
                 SoundPlayer eatEffect = new SoundPlayer(@"..\..\sounds\munchApple.wav");//sound effect when eating an apple
@@ -133,8 +137,17 @@ namespace Snake
                 {
                     
                     backgroundMusic.Play();
-                    if (backgroundMusic.Position >= new TimeSpan(0, 1, 25))
+                    if (backgroundMusic.Position >= backgroundMusic.NaturalDuration)
                     {
+                        if (MusicCounter == 2)
+                        {
+                            MusicCounter = 0;
+                        }
+                        else 
+                        {
+                            MusicCounter += 1;
+                        }
+                        backgroundMusic.Open(new System.Uri(Path.Combine(System.IO.Directory.GetCurrentDirectory(), @BGMusicDirectories[MusicCounter])));
                         backgroundMusic.Position = new TimeSpan(0, 0, 0);
                     }
 
