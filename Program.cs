@@ -45,9 +45,12 @@ namespace Snake
                 int difficultyLevel = 99;  // Player's selected difficulty.
                 int chooseColour = 0; //Player's selected colour's index
                 
-                string[] lMenuOptions = new string[4] { "Play", "Scores", "\tHelp", " Exit" };
+                string[] lMenuOptions = new string[4] { "Play", "Scores", "Help", " Exit" };
                 string[] lDifficultyOptions = new string[3] { "Easy", " Intermediate", "\t\tHardcore"};
-                string[] lColourOptions = new string[3] { "Red", "Blue", "\tGreen" };
+                string[] lColourOptions = new string[8] { "Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Purple", "Rainbow" };
+                //to change colours for rainbow
+                string[] lColorForRainbow = new string[7] { "Red", "DarkYellow", "Yellow", "Green", "Blue", "Magenta", "DarkMagenta" };
+
 
                 while (!userPlay)//loop stays in place as long as user does not want to play yet
                 {
@@ -72,12 +75,21 @@ namespace Snake
                 int bonusPoints = 0;
                 double sleepTime = 100;  // Speed
                 bool superXFoodEffect = false;
+                bool chooseRainbow = false;
+                int colourIndex = 0;
 
                 //Difficulty effect
-                DifficultyEffect(difficultyLevel, ref sleepTime, ref snakeLengthInit, ref numberOfObstaclesInit, ref foodDissapearTime);
+                DifficultyEffect(difficultyLevel, ref sleepTime, ref snakeLengthInit, ref numberOfObstaclesInit, ref foodDissapearTime, ref bonusPoints);
 
                 //Make effect from the chosen colour
-                ConsoleColor snakeColor = ColourEffect(chooseColour, ref foodDissapearTime, ref snakeHealth, ref bonusPoints);
+                ConsoleColor snakeColor = ColourEffect(chooseColour, ref foodDissapearTime, ref snakeHealth, ref bonusPoints, ref sleepTime, ref snakeLengthInit);
+
+                //Checks if the player chose Rainbow colour
+                if (snakeColor == ConsoleColor.White)
+                {
+                    chooseRainbow = true;
+                }
+
 
                 //this is used to increment when the users missed some food (in this case 3) and the snake would lost one part
                 int missedFoodCount = 0;
@@ -100,6 +112,10 @@ namespace Snake
                 foreach (Position position in snakeElements)
                 {
                     Console.SetCursorPosition(position.col, position.row);
+                    if (chooseRainbow)
+                    {
+                        ChangeColour(ref snakeColor, ref colourIndex, lColorForRainbow);
+                    }
                     Console.ForegroundColor = snakeColor;
                     Console.Write("*");
                 }
@@ -213,6 +229,10 @@ namespace Snake
                             {
                                 Console.SetCursorPosition(position.col, position.row);
                                 Console.ForegroundColor = snakeColor;
+                                if (chooseRainbow)
+                                {
+                                    ChangeColour(ref snakeColor, ref colourIndex, lColorForRainbow);
+                                }
                                 Console.Write("*");
                             }
                         }
@@ -304,6 +324,10 @@ namespace Snake
                     }
 
                     Console.SetCursorPosition(snakeHead.col, snakeHead.row);
+                    if (chooseRainbow)
+                    {
+                        ChangeColour(ref snakeColor, ref colourIndex, lColorForRainbow);
+                    }
                     Console.ForegroundColor = snakeColor;
                     Console.Write("*");
 
@@ -416,7 +440,14 @@ namespace Snake
                         lastHealthBonusTime = Environment.TickCount;
                     }
 
-                    sleepTime -= 0.01;
+                    if (sleepTime > 0.01)
+                    { 
+                        sleepTime -= 0.01;
+                    }
+                    else
+                    {
+                        sleepTime = 0.01;
+                    }
 
                     Console.SetCursorPosition(0, 0);
                     Thread.Sleep((int)sleepTime);
@@ -469,7 +500,7 @@ namespace Snake
             Console.WriteLine("  \\/_____/\\/_/ \\/_/\\/_/\\/_/\\/_/\\/_/\\/_____/     \\/_____/\\/_/\\/_/\\/_/  \\/_/\\/_____/ ");
 
             //positions and spacing for printing the menu options
-            const int startX = 5;
+            const int startX = 10;
             const int startY = 7;
             const int choiceSpacing = 5;
 
@@ -485,9 +516,14 @@ namespace Snake
                 Console.SetCursorPosition(5, 10);
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("Ability of each colour: " +
-                    "\n     1) Red - Every food would stay longer for 3 seconds" +
-                    "\n     2) Blue - Gain 3 points at the beginning of the game" +
-                    "\n     3) Green - Gain an extra health at the beginning of the game");
+                    "\n     1) Red - Every food would stay longer for 3 seconds." +
+                    "\n     2) Orange - Challenge yourself! The health of snake would be 1, but gain 5 points." +
+                    "\n     3) Yellow - The snake is 2 units shorter." +
+                    "\n     4) Green - Gain an extra health at the beginning of the game." +
+                    "\n     5) Blue - Gain 3 points at the beginning of the game." +
+                    "\n     6) Indigo - The snake is slower than normal speed." +
+                    "\n     7) Purple - The snake is faster than normal speed." +
+                    "\n     8) Rainbow - Nice visual effect!");
                 Console.ResetColor();
             }
 
@@ -576,14 +612,19 @@ namespace Snake
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("What is Snake Game?\n\n");
             Console.WriteLine("Snake is a simple computer game program that requires the users to control a \"snake\" in the screen to " +
-                "obtain as many \"apples\" (@) spawned in the map. As the \"snake\" consumes each \"apple\", the length of the snake will increase " +
-                "and thus, making it harder for the user to control. If the user hits a wall (=) or any part of its body (*), the game would end" +
+                "obtain as many \"apples\" (♥) spawned in the map. As the \"snake\" consumes each \"apple\", the length of the snake will increase " +
+                "and thus, making it harder for the user to control. If the user hits a wall (▒) or any part of its body (*), the game would end" +
                 "\n\nYou are required to provide a username before you play the game." +
                 "\n\nThere will be 3 difficuly levels: Easy, Intermediate, Hardcore. Try your best to challenge them!" +
                 "\n\nThen, you will have to choose a colour for your snake. There will be only 3 colours, but each of them has special ability!" +
                 "\n1) Red - Every food would stay longer for 3 seconds" +
-                "\n2) Blue - Gain 3 points at the beginning of the game" +
-                "\n3) Green - Gain an extra health at the beginning of the game");
+                "\n2) Orange - Challenge yourself! The health of snake would be 1, but gain 5 points." +
+                "\n3) Yellow - The snake is 2 units shorter." +
+                "\n4) Green - Gain an extra health at the beginning of the game." +
+                "\n5) Blue - Gain 3 points at the beginning of the game." +
+                "\n6) Indigo - The snake is slower than normal speed." +
+                "\n7) Purple - The snake is faster than normal speed." +
+                "\n8) Rainbow - Nice visual effect!");
             Console.ResetColor();
 
             Console.WriteLine("\n\nPress ENTER key to go back to menu");
@@ -679,12 +720,13 @@ namespace Snake
             Console.Write("\u2665");
         }
 
-        public static void DifficultyEffect(int diff, ref double sleepTime, ref int snakeLengthInit, ref int numberOfObstaclesInit, ref int foodDissapearTime)
+        public static void DifficultyEffect(int diff, ref double sleepTime, ref int snakeLengthInit, ref int numberOfObstaclesInit, ref int foodDissapearTime, ref int bonusPoints)
         {
             if (diff == 2)  // Hardcore
             {
                 sleepTime = 40;
                 snakeLengthInit = 12;
+                bonusPoints -= 9;
                 numberOfObstaclesInit = 10;
                 foodDissapearTime = 10000;
             }
@@ -692,13 +734,14 @@ namespace Snake
             {
                 sleepTime = 70;
                 snakeLengthInit = 7;
+                bonusPoints -= 4;
                 numberOfObstaclesInit = 5;
                 foodDissapearTime = 15000;
             }
             // Current configuration is for easy mode, therefore for easy mode nothing needs to change.
         }
 
-        public static ConsoleColor ColourEffect(int colour, ref int time, ref int health, ref int points)
+        public static ConsoleColor ColourEffect(int colour, ref int time, ref int health, ref int bonusPoints, ref double sleepTime, ref int snakeLengthInit)
         {
             if (colour == 0) 
             {
@@ -707,14 +750,48 @@ namespace Snake
             }
             else if (colour == 1)
             {
-                points += 3;
-                return ConsoleColor.Blue;
+                health = 1;
+                bonusPoints += 5;
+                return ConsoleColor.DarkYellow;
             }
-            else
+            else if (colour == 2)
+            {
+                snakeLengthInit -= 2;
+                bonusPoints += 2;
+                return ConsoleColor.Yellow;
+            }
+            else if (colour == 3)
             {
                 health++;
                 return ConsoleColor.Green;
             }
+            else if (colour == 4)
+            {
+                bonusPoints += 3;
+                return ConsoleColor.Blue;
+                
+            }
+            else if (colour == 5)
+            {
+                sleepTime -= 10;
+                return ConsoleColor.Magenta;
+            }
+            else if (colour == 6)
+            {
+                sleepTime += 10;
+                return ConsoleColor.DarkMagenta;
+            }
+            else
+            {
+                return ConsoleColor.White;
+            }
+        }
+
+        public static void ChangeColour(ref ConsoleColor color, ref int colourIndex, string[] lColorForRainbow)
+        {
+            colourIndex = (colourIndex + 1) % 7;
+            string lCurrentColour = lColorForRainbow[colourIndex];
+            color = (ConsoleColor)Enum.Parse(typeof(ConsoleColor), lCurrentColour);
         }
 
         public static List<string[]> ReadScores()
