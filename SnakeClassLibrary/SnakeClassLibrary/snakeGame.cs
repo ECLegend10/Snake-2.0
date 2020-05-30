@@ -9,9 +9,9 @@ using System.Security.Principal;
 using System.Windows.Input;
 
 
-namespace Snake
+namespace SnakeClassLibrary
 {
-    struct Position
+    public struct Position
     {
         public int row;
         public int col;
@@ -22,18 +22,49 @@ namespace Snake
         }
     }
 
-    class Program
+    public class snakeGame
     {
-        static Random randomNumbersGenerator = new Random();
-        static List<Position> obstacles = new List<Position>() { };
-        static Queue<Position> snakeElements = new Queue<Position>();
-        static Position food;
-        static Position food2;
-        static Position XFood;
-        static Position life;
-        static List<string[]> scoreboard = ReadScores(); //Scoreboard from text file
+        public static Random randomNumbersGenerator = new Random();
+        public static List<Position> obstacles = new List<Position>() { };
+        public static Queue<Position> snakeElements = new Queue<Position>();
+        public static Position food;
+        public static Position food2;
+        public static Position XFood;
+        public static Position life;
+        public static List<string[]> scoreboard = ReadScores(); //Scoreboard from text file
 
-        static void Main(string[] args)
+        public bool userPlay = false;//checks if the user wants to play snake game
+        public string userName = ""; //Player's name
+        public int difficultyLevel = 99;  // Player's selected difficulty.
+        public int chooseColour = 0; //Player's selected colour's index
+
+        
+        public int foodDissapearTime = 20000;
+        public int snakeHealth = 3;
+        public int bonusPoints = 0;
+        public double sleepTime = 100;  // Speed
+        public int snakeLengthInit = 3;
+
+        public int lastFoodTime = 0;
+        public int lastHealthBonusTime = 0;
+        public int lastHealthDissapearTime = 15000;
+        public int numberOfObstaclesInit = 0;
+        public bool superXFoodEffect = false;
+        public bool chooseRainbow = false;
+        public int colourIndex = 0;
+
+        string[] lMenuOptions = new string[4] { "Play", "Scores", "Help", " Exit" };
+        string[] lDifficultyOptions = new string[3] { "Easy", " Intermediate", "\t\tHardcore" };
+        string[] lColourOptions = new string[8] { "Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Purple", "Rainbow" };
+        //to change colours for rainbow
+        string[] lColorForRainbow = new string[7] { "Red", "DarkYellow", "Yellow", "Green", "Blue", "Magenta", "DarkMagenta" };
+
+
+        
+
+
+        /*
+        public static void Main(string[] args)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             while (true)
@@ -436,7 +467,7 @@ namespace Snake
                 }
                 ClearSnake();
             }
-        }
+        }*/
 
         // Initialise Obstacles
         public static void initialiseObstacles(int numberOfObstacles)
