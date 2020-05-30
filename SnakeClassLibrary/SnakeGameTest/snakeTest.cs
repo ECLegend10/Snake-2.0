@@ -31,9 +31,18 @@ namespace SnakeGameTest
         }
 
         [TestMethod]
-        public void ThirdTest()
+        public void changeDifficultyTest()
         {
-            Assert.AreEqual(1, 1);
+            snakeGame snakeGame1 = new snakeGame();
+            snakeGame1.difficultyLevel = 2;
+            snakeGame.DifficultyEffect(snakeGame1.difficultyLevel, ref snakeGame1.sleepTime, ref snakeGame1.snakeLengthInit, ref snakeGame1.numberOfObstaclesInit, ref snakeGame1.foodDissapearTime, ref snakeGame1.bonusPoints);
+            Assert.AreEqual(snakeGame1.numberOfObstaclesInit, 10);
+            Assert.AreEqual(snakeGame1.snakeLengthInit, 12);
+
+            snakeGame1.difficultyLevel = 1;
+            snakeGame.DifficultyEffect(snakeGame1.difficultyLevel, ref snakeGame1.sleepTime, ref snakeGame1.snakeLengthInit, ref snakeGame1.numberOfObstaclesInit, ref snakeGame1.foodDissapearTime, ref snakeGame1.bonusPoints);
+            Assert.AreEqual(snakeGame1.numberOfObstaclesInit, 5);
+            Assert.AreEqual(snakeGame1.snakeLengthInit, 7);
         }
     }
 }
