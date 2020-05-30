@@ -44,5 +44,25 @@ namespace SnakeGameTest
             Assert.AreEqual(snakeGame1.numberOfObstaclesInit, 5);
             Assert.AreEqual(snakeGame1.snakeLengthInit, 7);
         }
+
+        [TestMethod]
+        public void DetermineUserMenuChoiceTest()
+        {
+            snakeGame snakeGame1 = new snakeGame();
+
+            snakeGame1.fUserChoice = 0;
+            Assert.AreEqual(snakeGame.DetermineUserMenuChoice(snakeGame1.fUserChoice), true);
+
+            snakeGame1.fUserChoice = 1;
+            Assert.AreEqual(snakeGame.DetermineUserMenuChoice(snakeGame1.fUserChoice), false);
+
+            snakeGame1.fUserChoice = 2;
+            Assert.AreEqual(snakeGame.DetermineUserMenuChoice(snakeGame1.fUserChoice), false);
+
+            snakeGame1.fUserChoice = 3;
+            Assert.AreEqual(snakeGame.DetermineUserMenuChoice(snakeGame1.fUserChoice), false);
+
+
+        }
     }
 }

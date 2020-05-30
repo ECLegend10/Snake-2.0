@@ -44,6 +44,7 @@ namespace SnakeClassLibrary
         public int bonusPoints = 0;
         public double sleepTime = 100;  // Speed
         public int snakeLengthInit = 3;
+        public int fUserChoice;
 
         public int lastFoodTime = 0;
         public int lastHealthBonusTime = 0;
@@ -577,23 +578,23 @@ namespace SnakeClassLibrary
 
             return lcurrentChoice;
         }
-
+       
         // Game Menu Choices
         public static bool DetermineUserMenuChoice(int aUserChoice)
         {
             if (aUserChoice == 3)  //Exit Game
             {
-                Environment.Exit(0);
+                //Environment.Exit(0);
                 return false;
             }
             else if (aUserChoice == 2)  // Help Menu
             {
-                PrintGameInstructions();
+                //PrintGameInstructions();
                 return false;
             }
             else if (aUserChoice == 1)  // Scores Menu
             {
-                DisplayScores();
+                //DisplayScores();
                 return false;
             }
             else if (aUserChoice == 0)  // Play Snake Game
