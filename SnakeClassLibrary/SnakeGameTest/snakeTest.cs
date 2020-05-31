@@ -25,12 +25,6 @@ namespace SnakeGameTest
         }
 
         [TestMethod]
-        public void SecondTest()
-        {
-            Assert.AreEqual(1, 1);
-        }
-
-        [TestMethod]
         public void changeDifficultyTest()
         {
             snakeGame snakeGame1 = new snakeGame();

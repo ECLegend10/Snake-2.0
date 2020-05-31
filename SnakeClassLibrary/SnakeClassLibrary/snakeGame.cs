@@ -24,14 +24,6 @@ namespace SnakeClassLibrary
 
     public class snakeGame
     {
-        public static Random randomNumbersGenerator = new Random();
-        public static List<Position> obstacles = new List<Position>() { };
-        public static Queue<Position> snakeElements = new Queue<Position>();
-        public static Position food;
-        public static Position food2;
-        public static Position XFood;
-        public static Position life;
-
         public bool userPlay = false;//checks if the user wants to play snake game
         public string userName = ""; //Player's name
         public int difficultyLevel = 99;  // Player's selected difficulty.
@@ -44,23 +36,8 @@ namespace SnakeClassLibrary
         public double sleepTime = 100;  // Speed
         public int snakeLengthInit = 3;
         public int fUserChoice;
-
-        public int lastFoodTime = 0;
-        public int lastHealthBonusTime = 0;
-        public int lastHealthDissapearTime = 15000;
         public int numberOfObstaclesInit = 0;
-        public bool superXFoodEffect = false;
-        public bool chooseRainbow = false;
-        public int colourIndex = 0;
 
-        string[] lMenuOptions = new string[4] { "Play", "Scores", "Help", " Exit" };
-        string[] lDifficultyOptions = new string[3] { "Easy", " Intermediate", "\t\tHardcore" };
-        string[] lColourOptions = new string[8] { "Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Purple", "Rainbow" };
-        //to change colours for rainbow
-        string[] lColorForRainbow = new string[7] { "Red", "DarkYellow", "Yellow", "Green", "Blue", "Magenta", "DarkMagenta" };
-
-
-       
         // Game Menu Choices
         public static bool DetermineUserMenuChoice(int aUserChoice)
         {
@@ -85,8 +62,6 @@ namespace SnakeClassLibrary
             }
             return true;
         }
-
-        
 
         public static void DifficultyEffect(int diff, ref double sleepTime, ref int snakeLengthInit, ref int numberOfObstaclesInit, ref int foodDissapearTime, ref int bonusPoints)
         {
@@ -154,14 +129,5 @@ namespace SnakeClassLibrary
                 return ConsoleColor.White;
             }
         }
-
-        public static void ChangeColour(ref ConsoleColor color, ref int colourIndex, string[] lColorForRainbow)
-        {
-            colourIndex = (colourIndex + 1) % 7;
-            string lCurrentColour = lColorForRainbow[colourIndex];
-            color = (ConsoleColor)Enum.Parse(typeof(ConsoleColor), lCurrentColour);
-        }
-
-       
     }
 }
